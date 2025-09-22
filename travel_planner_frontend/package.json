@@ -1,7 +1,14 @@
 {
-  "name": "travel-planner-frontend",
-  "version": "0.1.0",
+  "name": "oceantrip-planner",
+  "version": "1.0.0",
   "private": true,
+  "description": "OceanTrip Planner - A login-free travel planner using free/open APIs (Nominatim, OpenTripMap, OpenRouteService).",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --watchAll=false",
+    "eject": "react-scripts eject"
+  },
   "dependencies": {
     "leaflet": "^1.9.4",
     "react": "^18.2.0",
@@ -9,18 +16,9 @@
     "react-leaflet": "^4.2.1",
     "react-scripts": "^5.0.1"
   },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
   "browserslist": {
     "production": [
-      ">0.2%",
+      ">0.5%",
       "not dead",
       "not op_mini all"
     ],
@@ -29,8 +27,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "cross-env": "^7.0.3"
   }
 }

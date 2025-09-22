@@ -1,4 +1,5 @@
-/* Ocean Professional Theme */
+/* Global styles and Ocean Professional theme variables */
+
 :root {
   --primary: #2563EB;
   --secondary: #F59E0B;
@@ -21,18 +22,14 @@ html, body, #root {
 
 body {
   margin: 0;
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial;
   color: var(--text);
   background: var(--bg);
 }
 
-.app {
-  display: flex;
-  flex-direction: column;
-  min-height: 100%;
-}
+/* Layout */
+.app { display: flex; min-height: 100%; flex-direction: column; }
 
-/* Top Bar */
 .topbar {
   position: sticky;
   top: 0;
@@ -55,7 +52,7 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0.3px;
   color: var(--text);
 }
@@ -98,7 +95,7 @@ body {
   padding: 0 14px;
   background: var(--primary);
   color: #fff;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   box-shadow: var(--shadow-sm);
   transition: transform .08s ease, box-shadow .2s ease, background .2s ease;
@@ -107,12 +104,12 @@ body {
 .btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
 .btn:active { transform: translateY(0); }
 
-.btn-secondary {
-  background: var(--secondary);
-  color: #1f2937;
-}
+.btn-secondary { background: var(--secondary); color: #1f2937; }
+.btn-danger { background: var(--error); }
 
-/* Layout */
+.row { display: flex; gap: 8px; align-items: center; }
+.col { display: flex; flex-direction: column; gap: 8px; }
+
 .main {
   display: grid;
   grid-template-columns: 360px 1fr 380px;
@@ -133,17 +130,14 @@ body {
 
 .panel-header {
   padding: 12px 14px;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--text);
   border-bottom: 1px solid rgba(17,24,39,0.06);
   background: var(--gradient-bg);
 }
 
-.panel-body {
-  padding: 12px;
-}
+.panel-body { padding: 12px; }
 
-/* Map box */
 .map-wrapper {
   height: calc(100vh - 80px);
   border-radius: var(--radius);
@@ -152,7 +146,6 @@ body {
   border: 1px solid rgba(17,24,39,0.06);
 }
 
-/* Cards/Items */
 .card {
   border: 1px solid rgba(17,24,39,0.06);
   border-radius: 12px;
@@ -178,28 +171,20 @@ body {
   align-items: center;
   gap: 6px;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--primary);
   background: rgba(37,99,235,0.08);
   padding: 4px 8px;
   border-radius: 999px;
 }
 
-/* Small helpers */
-.row { display: flex; gap: 8px; align-items: center; }
-.col { display: flex; flex-direction: column; gap: 8px; }
 .muted { color: #6b7280; }
 .sep { height: 1px; background: rgba(17,24,39,0.06); margin: 8px 0; }
 
-.empty {
-  padding: 12px;
-  border: 1px dashed rgba(17,24,39,0.2);
-  color: #6b7280;
-  border-radius: 10px;
-  text-align: center;
-}
+/* Leaflet basics */
+.leaflet-container { width: 100%; height: 100%; }
+.leaflet-top, .leaflet-bottom { z-index: 500; }
 
-/* Responsive */
 @media (max-width: 1200px) {
   .main { grid-template-columns: 320px 1fr 340px; }
 }
