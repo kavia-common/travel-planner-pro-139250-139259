@@ -36,7 +36,14 @@ See .env.example for a ready-to-copy template.
 Troubleshooting
 - "This API requires authentication" when searching attractions:
   - Cause: OpenTripMap rejected the request without a key or due to policy changes.
-  - Fix: Obtain a free key at https://opentripmap.io/ and set REACT_APP_OPENTRIPMAP_API_KEY in .env, then restart the dev server.
+  - Fix:
+    1) Obtain a free key at https://opentripmap.io/
+    2) Create/Update .env in the project root (same folder as package.json)
+    3) Set REACT_APP_OPENTRIPMAP_API_KEY=<your_key> (must include REACT_APP_ prefix)
+    4) Stop the dev server and run npm start again (CRA loads env at startup)
+    5) Open DevTools → Network and confirm requests to /places/* include ?apikey=
+  - CI/Production builds:
+    - Ensure the env var is set at build time before running `npm run build`, or inject via your hosting provider's env mechanism and rebuild.
 - Nominatim policy/rate limit (429/403):
   - Set REACT_APP_NOMINATIM_UA to a meaningful value with contact info.
   - Wait and retry later if rate-limited, and follow policy.

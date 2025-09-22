@@ -143,6 +143,16 @@ function App() {
             <div className="muted" style={{fontSize: 12}}>
               Data via OpenTripMap (free). Please respect rate limits.
             </div>
+            {process?.env?.NODE_ENV !== 'production' && (
+              <div className="card" style={{ marginTop: 10 }}>
+                <div style={{ fontWeight: 700, marginBottom: 6 }}>Developer Diagnostics</div>
+                <div className="muted" style={{ fontSize: 12, lineHeight: 1.5 }}>
+                  REACT_APP_OPENTRIPMAP_API_KEY: {process?.env?.REACT_APP_OPENTRIPMAP_API_KEY ? 'present at build' : 'missing at build'}<br />
+                  If you just added/changed .env, fully restart the dev server (npm start).<br />
+                  Verify attraction requests include ?apikey=*** in the query (DevTools → Network).
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

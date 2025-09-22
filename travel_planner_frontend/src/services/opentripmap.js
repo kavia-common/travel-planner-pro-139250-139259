@@ -2,9 +2,28 @@ const BASE = 'https://api.opentripmap.com/0.1/en/places';
 
 /**
  * Resolve OpenTripMap API key from environment (optional but increasingly required).
+ * Adds diagnostics in development to help identify misconfiguration.
  */
 function getApiKey() {
-  return process.env.REACT_APP_OPENTRIPMAP_API_KEY || '';
+  const key = process.env.REACT_APP_OPENTRIPMAP_API_KEY || '';
+
+  // Dev diagnostics: show once per session if the key appears missing/misnamed.
+  if (typeof window !== 'undefined' && process && process.env && process.env.NODE_ENV !== 'production') {
+    if (!key) {
+      // Common mistakes: wrong var name (missing REACT_APP_ prefix), forgot to restart dev server after editing .env
+      // eslint-disable-next-line no-console
+      console.warn(
+        '[OpenTripMap] No API key detected at process.env.REACT_APP_OPENTRIPMAP_API_KEY.\n' +
+        '- Ensure .env is placed in the project root (same folder as package.json).\n' +
+        "- Variable name must start with 'REACT_APP_': REACT_APP_OPENTRIPMAP_API_KEY=<your_key>\n" + 
+        '- After editing .env, restart the dev server (npm start) for CRA to load new env vars.'
+      );
+    } else {
+      // eslint-disable-next-line no-console
+      console.log('[OpenTripMap] API key detected and will be added as apikey query parameter.');
+    }
+  }
+  return key;
 }
 
 /**
@@ -30,14 +49,27 @@ async function getJson(url, { missingKeyHint } = {}) {
 
     // Detect typical auth failures
     const bodyLower = (text || '').toLowerCase();
-    const authLikely = res.status === 401 || res.status === 403 || bodyLower.includes('auth') || bodyLower.includes('apikey') || bodyLower.includes('api key') || bodyLower.includes('requires authentication');
+    const authLikely =
+      res.status === 401 ||
+      res.status === 403 ||
+      bodyLower.includes('auth') ||
+      bodyLower.includes('apikey') ||
+      bodyLower.includes('api key') ||
+      bodyLower.includes('requires authentication');
 
     if (authLikely) {
       // Provide actionable guidance
-      const extra = missingKeyHint
-        ? `\n\nAction: ${missingKeyHint}`
-        : '\n\nAction: Set REACT_APP_OPENTRIPMAP_API_KEY in a .env file at the project root and restart the dev server.';
-      throw new Error(`OpenTripMap authentication required (${res.status}).${extra}`);
+      const envLoadedKey = process?.env?.REACT_APP_OPENTRIPMAP_API_KEY ? '[present at build]' : '[missing at build]';
+      const extra = (missingKeyHint || '') +
+        `\n\nDetected env REACT_APP_OPENTRIPMAP_API_KEY: ${envLoadedKey}` +
+        '\nCheckpoints:' +
+        '\n1) Ensure the variable name is exactly REACT_APP_OPENTRIPMAP_API_KEY.' +
+        '\n2) .env file must be in the project root (same directory as package.json).' +
+        '\n3) After changing .env, fully restart the dev server (stop and run npm start again).' +
+        '\n4) For deployed builds, rebuild the app with the env var set before running "npm run build".' +
+        '\n5) Verify requests include ?apikey=... in the URL (check DevTools > Network).';
+
+      throw new Error(`OpenTripMap authentication required (${res.status}).\n\nAction: ${extra || 'Provide a valid API key.'}`);
     }
 
     throw new Error(`OpenTripMap API failed (${res.status}): ${text || res.statusText}`);
@@ -65,6 +97,16 @@ export async function fetchAttractionsByRadius({ lat, lon, radius = 3000, kinds 
   const missingKeyHint = !apikey
     ? 'You are using OpenTripMap without an API key. Sign up for a free key at https://opentripmap.io/ and set REACT_APP_OPENTRIPMAP_API_KEY in your .env.'
     : null;
+
+  // Dev diagnostics: log the outgoing URL sans key visibility
+  if (typeof window !== 'undefined' && process?.env?.NODE_ENV !== 'production') {
+    const debugUrl = new URL(url.toString());
+    if (debugUrl.searchParams.get('apikey')) {
+      debugUrl.searchParams.set('apikey', '***redacted***');
+    }
+    // eslint-disable-next-line no-console
+    console.debug('[OpenTripMap] Fetch URL:', debugUrl.toString());
+  }
 
   const list = await getJson(url.toString(), { missingKeyHint });
   // Enrich details for each xid (optional for this version we map minimally)

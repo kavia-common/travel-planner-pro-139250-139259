@@ -15,11 +15,19 @@ export default function SearchPanel({ center, onResults, onAdd }) {
     } catch (e) {
       console.error(e);
       const msg = e && e.message ? e.message : 'Unknown error.';
+      const envState = process?.env?.REACT_APP_OPENTRIPMAP_API_KEY ? 'present at build' : 'missing at build';
       alert(
         'Failed to fetch attractions.\n\n' +
         msg +
-        '\n\nTips:\n- If the message indicates authentication is required, set REACT_APP_OPENTRIPMAP_API_KEY in a .env file and restart.\n' +
-        '- You can obtain a free key at https://opentripmap.io/\n- Try a larger radius or a different category.\n- Please wait and retry if rate-limited.'
+        '\n\nDiagnostics:\n' +
+        `- REACT_APP_OPENTRIPMAP_API_KEY: ${envState}\n` +
+        'Tips:\n' +
+        "- If authentication is required, set REACT_APP_OPENTRIPMAP_API_KEY in a .env file (project root) and restart the dev server.\n" +
+        '- Obtain a free key at https://opentripmap.io/\n' +
+        '- After changing .env, stop and re-run npm start.\n' +
+        '- Verify requests include ?apikey=... in DevTools → Network.\n' +
+        '- Try a larger radius or a different category.\n' +
+        '- Please wait and retry if rate-limited.'
       );
     } finally {
       setLoading(false);
