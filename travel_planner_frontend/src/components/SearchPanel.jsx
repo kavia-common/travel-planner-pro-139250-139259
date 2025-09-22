@@ -11,7 +11,9 @@ export default function SearchPanel({ center, onResults, onAdd }) {
     setLoading(true);
     try {
       const res = await fetchAttractionsByRadius({ lat: center[0], lon: center[1], radius, kinds });
-      onResults(res);
+      // Always publish to local results so the list updates, then notify parent (e.g., to update map markers)
+      publishResults(res);
+      onResults?.(res);
     } catch (e) {
       console.error(e);
       const msg = e && e.message ? e.message : 'Unknown error.';

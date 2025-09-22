@@ -101,11 +101,15 @@ export async function fetchAttractionsByRadius({ lat, lon, radius = 3000, kinds 
   // Dev diagnostics: log the outgoing URL sans key visibility
   if (typeof window !== 'undefined' && process?.env?.NODE_ENV !== 'production') {
     const debugUrl = new URL(url.toString());
-    if (debugUrl.searchParams.get('apikey')) {
+    const hasKey = !!debugUrl.searchParams.get('apikey');
+    if (hasKey) {
       debugUrl.searchParams.set('apikey', '***redacted***');
+      // eslint-disable-next-line no-console
+      console.debug('[OpenTripMap] Fetch URL (with apikey):', debugUrl.toString());
+    } else {
+      // eslint-disable-next-line no-console
+      console.debug('[OpenTripMap] Fetch URL (no apikey):', debugUrl.toString());
     }
-    // eslint-disable-next-line no-console
-    console.debug('[OpenTripMap] Fetch URL:', debugUrl.toString());
   }
 
   const list = await getJson(url.toString(), { missingKeyHint });
