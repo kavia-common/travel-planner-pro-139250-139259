@@ -157,6 +157,13 @@ export default function App() {
             itinerary={itinerary}
             route={routeGeojson}
             onSelect={(id) => setSelectedItemId(id)}
+            onAdd={(item) => {
+              // Add to itinerary and visually select it
+              if (item) {
+                setItinerary((prev) => (prev.find((x) => x.id === item.id) ? prev : [...prev, item]));
+                setSelectedItemId(item.id);
+              }
+            }}
           />
         </div>
 

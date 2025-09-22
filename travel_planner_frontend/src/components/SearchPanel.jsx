@@ -75,7 +75,7 @@ export default function SearchPanel({ center, onResults, onAdd }) {
         <ol>
           <li>Use the top bar to locate a city.</li>
           <li>Click "Nearby attractions" to fetch POIs near the current center.</li>
-          <li>Click any result in the map list to add it to the itinerary.</li>
+          <li>On the map, click a marker and press “Select” to add it to the itinerary.</li>
         </ol>
       </div>
     </div>
