@@ -43,7 +43,8 @@ function App() {
       }
     } catch (e) {
       console.error('Locate error', e);
-      alert('Failed to search location. Please try a different query.');
+      const msg = (e && e.message) ? e.message : 'Unknown error';
+      alert(`Failed to search location.\n\nDetails: ${msg}\n\nTips:\n- Try a different query (e.g., City, Country)\n- Ensure network connectivity\n- If this persists, you may be rate limited by Nominatim. Please try again later.`);
     } finally {
       setSearching(false);
     }

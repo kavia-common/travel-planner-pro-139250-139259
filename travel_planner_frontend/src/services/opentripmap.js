@@ -6,8 +6,20 @@ function getApiKey() {
 }
 
 async function getJson(url) {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error('OpenTripMap API failed');
+  let res;
+  try {
+    res = await fetch(url, {
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+  } catch (err) {
+    throw new Error('Network error when contacting OpenTripMap: ' + err.message);
+  }
+  if (!res.ok) {
+    const text = await res.text().catch(() => '');
+    throw new Error(`OpenTripMap API failed (${res.status}): ${text || res.statusText}`);
+  }
   return res.json();
 }
 
