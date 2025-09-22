@@ -1,6 +1,6 @@
 # Free/Open API Integrations
 
-This frontend uses only free, open APIs. Please respect each provider's usage policies and rate limits.
+This frontend uses only free, open APIs. Please respect each provider's usage policies and rate limits. There are no authentication screens in this app.
 
 APIs used:
 - OpenStreetMap Nominatim (Geocoding/Search)
@@ -49,4 +49,3 @@ Troubleshooting
   - Wait and retry later if rate-limited, and follow policy.
 - Routing returns a straight line:
   - Set REACT_APP_ORS_API_KEY to enable real road routing via OpenRouteService.
-

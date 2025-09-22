@@ -6,6 +6,8 @@ A modern, authentication-free travel planner that uses only free/open APIs:
 - Attractions: OpenTripMap
 - Routing: OpenRouteService (optional key; falls back to simple polyline)
 
+No authentication: There are no login or signup screens, and no auth flows anywhere.
+
 Theme: Ocean Professional (primary #2563EB, secondary #F59E0B)
 
 ## Quick Start
@@ -15,10 +17,11 @@ Theme: Ocean Professional (primary #2563EB, secondary #F59E0B)
 npm install
 ```
 
-2) (Optional) Create `.env` in project root:
+2) Create `.env` in project root (optional but recommended). You can copy from `.env.example`:
 ```
 REACT_APP_OPENTRIPMAP_API_KEY=your_opentripmap_key
 REACT_APP_ORS_API_KEY=your_ors_key
+REACT_APP_NOMINATIM_UA="OceanTrip Planner (contact: you@example.com)"
 ```
 
 3) Run dev server
@@ -32,7 +35,7 @@ Open http://localhost:3000
 - Main page with map viewport
 - Attraction search panel (radius + category)
 - Itinerary management (add/remove/reorder/clear)
-- Route optimization button (calls ORS directions if key provided; otherwise draws straight polyline)
+- Route button to draw a route between stops (uses ORS if key; otherwise a straight polyline)
 - Responsive, modern UI with subtle gradients and rounded cards
 
 ## Free/Open API Notes
