@@ -65,8 +65,7 @@ export default function MapView({ center, zoom, poi, itinerary, route, onSelect,
       if (target && Array.isArray(target) && target.length === 2) {
         map.setView(target, zoomLevel ?? map.getZoom(), { animate: true });
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [target?.[0], target?.[1], zoomLevel]);
+    }, [map, target, zoomLevel]);
     return null;
   };
 
