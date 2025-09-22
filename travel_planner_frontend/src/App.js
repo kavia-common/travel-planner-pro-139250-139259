@@ -1,47 +1,181 @@
-import React, { useState, useEffect } from 'react';
-import logo from './logo.svg';
+import React, { useMemo, useState } from 'react';
 import './App.css';
+import './leaflet.css';
+import MapView from './components/MapView';
+import SearchPanel from './components/SearchPanel';
+import ItineraryPanel from './components/ItineraryPanel';
+import { geocodeSearch } from './services/nominatim';
+import { fetchAttractionsByRadius } from './services/opentripmap';
+import { getOptimizedRoute } from './services/routing';
 
 // PUBLIC_INTERFACE
 function App() {
-  const [theme, setTheme] = useState('light');
+  /** App-level state */
+  const [center, setCenter] = useState([48.8566, 2.3522]); // Paris default
+  const [zoom, setZoom] = useState(12);
+  const [placeQuery, setPlaceQuery] = useState('');
+  const [searching, setSearching] = useState(false);
 
-  // Effect to apply theme to document element
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-  }, [theme]);
+  const [poi, setPoi] = useState([]); // attractions from OpenTripMap
+  const [routeGeojson, setRouteGeojson] = useState(null);
+
+  const [itinerary, setItinerary] = useState([]); // [{id, name, lat, lon}]
+  const [selectedItemId, setSelectedItemId] = useState(null);
+
+  // Derived bounds center from itinerary (used to adjust view when route updates)
+  const mapKey = useMemo(() => itinerary.map(p => p.id).join('-'), [itinerary]);
 
   // PUBLIC_INTERFACE
-  const toggleTheme = () => {
-    setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
+  const handleLocate = async () => {
+    if (!placeQuery) return;
+    setSearching(true);
+    try {
+      const res = await geocodeSearch(placeQuery);
+      if (res && res.length) {
+        const first = res[0];
+        const lat = parseFloat(first.lat);
+        const lon = parseFloat(first.lon);
+        setCenter([lat, lon]);
+        setZoom(13);
+        // Auto-load attractions around this point
+        const attractions = await fetchAttractionsByRadius({ lat, lon, radius: 3000, kinds: 'interesting_places' });
+        setPoi(attractions);
+      }
+    } catch (e) {
+      console.error('Locate error', e);
+      alert('Failed to search location. Please try a different query.');
+    } finally {
+      setSearching(false);
+    }
+  };
+
+  // PUBLIC_INTERFACE
+  const addToItinerary = (item) => {
+    // item: {id, name, lat, lon}
+    setItinerary(prev => {
+      if (prev.find(x => x.id === item.id)) return prev;
+      return [...prev, item];
+    });
+  };
+
+  // PUBLIC_INTERFACE
+  const removeFromItinerary = (id) => {
+    setItinerary(prev => prev.filter(p => p.id !== id));
+  };
+
+  // PUBLIC_INTERFACE
+  const reorderItinerary = (fromIndex, toIndex) => {
+    setItinerary(prev => {
+      const clone = [...prev];
+      const [moved] = clone.splice(fromIndex, 1);
+      clone.splice(toIndex, 0, moved);
+      return clone;
+    });
+  };
+
+  // PUBLIC_INTERFACE
+  const clearItinerary = () => {
+    setItinerary([]);
+    setRouteGeojson(null);
+  };
+
+  // PUBLIC_INTERFACE
+  const optimizeRoute = async () => {
+    if (itinerary.length < 2) {
+      alert('Add at least two places to optimize a route.');
+      return;
+    }
+    try {
+      const route = await getOptimizedRoute(itinerary);
+      setRouteGeojson(route);
+    } catch (e) {
+      console.error(e);
+      alert('Failed to optimize route. Ensure routing API key is set and try again.');
+    }
   };
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <button 
-          className="theme-toggle" 
-          onClick={toggleTheme}
-          aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
-        >
-          {theme === 'light' ? '🌙 Dark' : '☀️ Light'}
-        </button>
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <p>
-          Current theme: <strong>{theme}</strong>
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app">
+      <div className="topbar">
+        <div className="topbar-inner">
+          <div className="brand">
+            <span className="dot" />
+            OceanTrip Planner
+            <span className="badge" title="Free & Open APIs">OSS</span>
+          </div>
+          <div className="searchbar">
+            <input
+              className="input"
+              placeholder="Search city or place (e.g., Paris, Eiffel Tower)"
+              value={placeQuery}
+              onChange={(e) => setPlaceQuery(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleLocate()}
+              aria-label="Search place"
+            />
+            <button className="btn" onClick={handleLocate} disabled={searching}>
+              {searching ? 'Searching…' : 'Locate'}
+            </button>
+          </div>
+          <div className="row">
+            <a
+              className="btn btn-secondary"
+              href="https://operations.osmfoundation.org/policies/nominatim/"
+              target="_blank" rel="noreferrer"
+              title="Nominatim Policy"
+            >
+              API Policy
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div className="main">
+        <div className="panel">
+          <div className="panel-header">Attraction Search</div>
+          <div className="panel-body">
+            <SearchPanel
+              center={center}
+              onResults={setPoi}
+              onAdd={addToItinerary}
+            />
+            <div className="sep" />
+            <div className="muted" style={{fontSize: 12}}>
+              Data via OpenTripMap (free). Please respect rate limits.
+            </div>
+          </div>
+        </div>
+
+        <div className="map-wrapper">
+          <MapView
+            key={mapKey}
+            center={center}
+            zoom={zoom}
+            poi={poi}
+            itinerary={itinerary}
+            route={routeGeojson}
+            onSelect={(id) => setSelectedItemId(id)}
+          />
+        </div>
+
+        <div className="panel">
+          <div className="panel-header">Itinerary & Route</div>
+          <div className="panel-body">
+            <ItineraryPanel
+              items={itinerary}
+              selectedId={selectedItemId}
+              onRemove={removeFromItinerary}
+              onReorder={reorderItinerary}
+              onClear={clearItinerary}
+              onOptimize={optimizeRoute}
+            />
+            <div className="sep" />
+            <div className="muted" style={{fontSize: 12}}>
+              Routing via OpenRouteService (free tier requires API key).
+              Set REACT_APP_ORS_API_KEY in your environment for routing.
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

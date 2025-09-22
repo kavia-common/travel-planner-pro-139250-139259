@@ -1,82 +1,43 @@
-# Lightweight React Template for KAVIA
+# OceanTrip Planner – React Frontend
 
-This project provides a minimal React template with a clean, modern UI and minimal dependencies.
+A modern, authentication-free travel planner that uses only free/open APIs:
+- Map: Leaflet with OpenStreetMap tiles
+- Geocoding/Search: OpenStreetMap Nominatim
+- Attractions: OpenTripMap
+- Routing: OpenRouteService (optional key; falls back to simple polyline)
 
-## Features
+Theme: Ocean Professional (primary #2563EB, secondary #F59E0B)
 
-- **Lightweight**: No heavy UI frameworks - uses only vanilla CSS and React
-- **Modern UI**: Clean, responsive design with KAVIA brand styling
-- **Fast**: Minimal dependencies for quick loading times
-- **Simple**: Easy to understand and modify
+## Quick Start
 
-## Getting Started
-
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-### `npm test`
-
-Launches the test runner in interactive watch mode.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-## Customization
-
-### Colors
-
-The main brand colors are defined as CSS variables in `src/App.css`:
-
-```css
-:root {
-  --kavia-orange: #E87A41;
-  --kavia-dark: #1A1A1A;
-  --text-color: #ffffff;
-  --text-secondary: rgba(255, 255, 255, 0.7);
-  --border-color: rgba(255, 255, 255, 0.1);
-}
+1) Install dependencies
+```
+npm install
 ```
 
-### Components
+2) (Optional) Create `.env` in project root:
+```
+REACT_APP_OPENTRIPMAP_API_KEY=your_opentripmap_key
+REACT_APP_ORS_API_KEY=your_ors_key
+```
 
-This template uses pure HTML/CSS components instead of a UI framework. You can find component styles in `src/App.css`. 
+3) Run dev server
+```
+npm start
+```
 
-Common components include:
-- Buttons (`.btn`, `.btn-large`)
-- Container (`.container`)
-- Navigation (`.navbar`)
-- Typography (`.title`, `.subtitle`, `.description`)
+Open http://localhost:3000
 
-## Learn More
+## Features
+- Main page with map viewport
+- Attraction search panel (radius + category)
+- Itinerary management (add/remove/reorder/clear)
+- Route optimization button (calls ORS directions if key provided; otherwise draws straight polyline)
+- Responsive, modern UI with subtle gradients and rounded cards
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Free/Open API Notes
+See INTEGRATIONS.md for details, policies, and links.
 
-### Code Splitting
+## Styling
+All components follow the Ocean Professional theme. See `src/App.css` for variables and layout rules.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)

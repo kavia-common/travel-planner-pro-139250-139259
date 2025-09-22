@@ -1,0 +1,13 @@
+/* Local Leaflet CSS shim: use CDN to avoid bundler path resolution issues */
+@import url("https://unpkg.com/leaflet@1.9.4/dist/leaflet.css");
+
+/* Ensure map container fills parent */
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+}
+
+/* Optional: z-index tweaks for controls over panels */
+.leaflet-top, .leaflet-bottom {
+  z-index: 500;
+}
