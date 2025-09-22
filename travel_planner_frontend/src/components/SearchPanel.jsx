@@ -14,7 +14,13 @@ export default function SearchPanel({ center, onResults, onAdd }) {
       onResults(res);
     } catch (e) {
       console.error(e);
-      alert('Failed to fetch attractions. Try again later.');
+      const msg = e && e.message ? e.message : 'Unknown error.';
+      alert(
+        'Failed to fetch attractions.\n\n' +
+        msg +
+        '\n\nTips:\n- If the message indicates authentication is required, set REACT_APP_OPENTRIPMAP_API_KEY in a .env file and restart.\n' +
+        '- You can obtain a free key at https://opentripmap.io/\n- Try a larger radius or a different category.\n- Please wait and retry if rate-limited.'
+      );
     } finally {
       setLoading(false);
     }

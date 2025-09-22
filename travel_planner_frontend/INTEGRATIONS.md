@@ -7,10 +7,11 @@ APIs used:
   - Endpoint: https://nominatim.openstreetmap.org/search
   - Usage: No key required. Provide meaningful user-agent and follow policy.
   - Policy: https://operations.osmfoundation.org/policies/nominatim/
+  - Env (recommended): REACT_APP_NOMINATIM_UA (sets a meaningful User-Agent header)
 
 - OpenTripMap (Attraction/POI data)
   - Endpoint: https://api.opentripmap.com/0.1/en/places
-  - API key: Optional for higher rate limits. Without a key, you may experience stricter limits.
+  - API key: Increasingly required for reliable access. Without a key, you may receive errors like "this api requires authentication" or face strict rate limits.
   - Sign up (free): https://opentripmap.io/
   - Env: REACT_APP_OPENTRIPMAP_API_KEY
 
@@ -26,10 +27,19 @@ Map Visualization:
 
 Environment Variables
 - Create a .env file in the project root (same directory as package.json) and set:
-  - REACT_APP_OPENTRIPMAP_API_KEY=<your_key> (optional)
+  - REACT_APP_OPENTRIPMAP_API_KEY=<your_key> (recommended/required for reliable attractions)
   - REACT_APP_ORS_API_KEY=<your_key> (optional for simple mode; required for real routing)
+  - REACT_APP_NOMINATIM_UA="OceanTrip Planner (contact: you@example.com)" (recommended)
 
-If these are not set:
-- Attractions will still load (rate limits may be stricter without OpenTripMap key).
-- Routing will degrade gracefully to a straight line between itinerary stops.
+See .env.example for a ready-to-copy template.
+
+Troubleshooting
+- "This API requires authentication" when searching attractions:
+  - Cause: OpenTripMap rejected the request without a key or due to policy changes.
+  - Fix: Obtain a free key at https://opentripmap.io/ and set REACT_APP_OPENTRIPMAP_API_KEY in .env, then restart the dev server.
+- Nominatim policy/rate limit (429/403):
+  - Set REACT_APP_NOMINATIM_UA to a meaningful value with contact info.
+  - Wait and retry later if rate-limited, and follow policy.
+- Routing returns a straight line:
+  - Set REACT_APP_ORS_API_KEY to enable real road routing via OpenRouteService.
 
